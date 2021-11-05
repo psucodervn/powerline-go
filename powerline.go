@@ -121,9 +121,49 @@ func newPowerline(cfg Config, cwd string, align alignment) *powerline {
 	} else {
 		mods = cfg.ModulesRight
 	}
+
+	if len(cfg.PathAliases) > 0 {
+		wg := &sync.WaitGroup{}
+		mu := sync.Mutex{}
+		for k := range cfg.PathAliases {
+			if len(cfg.PathAliases[k]) > 0 {
+				continue
+			}
+			wg.Add(1)
+			go func(k string) {
+				defer wg.Done()
+				dirs := childDirs(k, p.userInfo.HomeDir)
+				mu.Lock()
+				delete(cfg.PathAliases, k)
+				for _, dir := range dirs {
+					cfg.PathAliases[path.Join(k, dir)] = dir
+				}
+				mu.Unlock()
+			}(k)
+		}
+		wg.Wait()
+	}
+
 	initSegments(p, mods)
 
 	return p
+}
+
+func childDirs(dir string, homeDir string) []string {
+	if dir[:2] == "~/" {
+		dir = path.Join(homeDir, dir[2:])
+	}
+	files, err := os.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+	var dirs []string
+	for _, file := range files {
+		if file.IsDir() {
+			dirs = append(dirs, file.Name())
+		}
+	}
+	return dirs
 }
 
 func detectShell(shellExe string) string {

@@ -192,7 +192,11 @@ func main() {
 		case "path-aliases":
 			for _, pair := range strings.Split(*args.PathAliases, ",") {
 				kv := strings.SplitN(pair, "=", 2)
-				cfg.PathAliases[kv[0]] = kv[1]
+				if len(kv) >= 2 {
+					cfg.PathAliases[kv[0]] = kv[1]
+				} else {
+					cfg.PathAliases[kv[0]] = ""
+				}
 			}
 		case "duration":
 			cfg.Duration = *args.Duration
