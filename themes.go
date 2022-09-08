@@ -21,10 +21,14 @@ type SymbolTemplate struct {
 	RepoStashed    string
 
 	VenvIndicator string
+	NodeIndicator string
+	RvmIndicator  string
 }
 
 // Theme definitions
 type Theme struct {
+	BoldForeground bool
+
 	Reset uint8
 
 	DefaultFg uint8
@@ -140,6 +144,9 @@ type Theme struct {
 	NodeVersionFg uint8
 	NodeVersionBg uint8
 
+	RvmFg        uint8
+	RvmBg        uint8
+
 	LoadFg           uint8
 	LoadBg           uint8
 	LoadHighBg       uint8
@@ -151,4 +158,9 @@ type Theme struct {
 
 	DurationFg uint8
 	DurationBg uint8
+
+	ViModeCommandFg uint8
+	ViModeCommandBg uint8
+	ViModeInsertFg uint8
+	ViModeInsertBg uint8
 }
